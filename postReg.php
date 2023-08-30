@@ -22,14 +22,9 @@ if($hobby){
 echo "爱好： $hobby <br/>";
 
 // 连接数据库服务器
-// 第一步：连接数据库服务器
-$conn = mysqli_connect("localhost", "root", "123456", "member");
-if (!$conn) {
-  die("数据库连接失败！<br/>");     // die() 方法类似于echo，用于输出一个文档流文字，但执行后程序将结束，不会继续向下执行
-}
-// 第二步：设置字符集
-mysqli_query($conn, "set names utf8");
-// 第三部：验证用户输入的内容
+// 第一步：引入连接数据库文件
+include_once "./conn.php";
+// 第二部：验证用户输入的内容
 if(!strlen($username) || !strlen($password)){
   echo "<script>alert('用户名和密码不能为空！'); history.back();</script>";     // history.back(); 返回上一个页面
   exit;      // 终止程序执行
@@ -52,7 +47,7 @@ if($password <> $repPassword){      // <> 不相等判断符
   echo "<script>alert('两次密码输入不一致！'); history.back();</script>";
   exit; 
 }
-// 第四部：判断用户名是否重复（是否被占用）
+// 第三部：判断用户名是否重复（是否被占用）
 $sql = "select * from user where username = '$username'";
 $result = mysqli_query($conn, $sql);
 $num = mysqli_num_rows($result);     // mysqli_num_rows() 判断查询结果有几条数据
@@ -60,11 +55,11 @@ if($num){
   echo "<script>alert('该用户名已存在，请重新输入！'); history.back();</script>";
   exit; 
 }
-// 第五部：编写SQL语句
+// 第四部：编写SQL语句
 $sql = "insert into
           user (username, password, email, sex, hobby, created) 
         values ('$username', '" . md5($password) . "', '$email', '$sex', '$hobby', '" . date('Y-m-d H:i:s', time()) . "');";
-// 第六步：执行SQL语句
+// 第五步：执行SQL语句
 $result = mysqli_query($conn, $sql);
 if($result){
   echo "<script>alert('数据插入成功！'); location.href='./index.php';</script>";
